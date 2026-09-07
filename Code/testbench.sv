@@ -7,6 +7,11 @@ module TB();
 	MIPS mips(clk, rst);
 
 	initial begin
+        $dumpfile("sim.vcd");
+        $dumpvars(0, TB);
+    end
+
+    initial begin
 		forever #20 clk = ~clk;
 	end
 
@@ -18,7 +23,7 @@ module TB();
 		#110
 		rst =0;
 		#50000
-		$stop;
+		$finish;
 	end
 
 endmodule

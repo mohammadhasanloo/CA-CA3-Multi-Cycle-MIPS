@@ -11,11 +11,12 @@ module Datapath(
 	wire [31:0] Address, Write_data;
 	input Mem_read , Mem_write;
 	wire [31:0] Mem_read_value;
-	Memory Mem(clk,Address,Write_data,Write_data,Mem_write,Mem_read_value);
+	Memory Mem(clk,Address,Write_data,Mem_read,Mem_write,Mem_read_value);
 
 	
 	//ALU
 	wire [31:0] In1 ,In2;
+	wire [31:0] PrePCreg_out;
 	input [3:0] ALUoperation;
 	wire [31:0] ALU_Result;
 	output Z, C, N, V;
@@ -110,14 +111,14 @@ module Datapath(
 	Mux2to1_4bit DT_STORE_MUX (IR_out[15:12] , IR_out[15:12] ,DT_store , Read_reg2);
 
 	input ALUsrcA;
-	Mux2to1_4bit ALU_SRC_A_MUX (PCreg_out_mux , A_out ,ALUsrcA , In1);
+	Mux2to1_32bit ALU_SRC_A_MUX (PCreg_out_mux , A_out ,ALUsrcA , In1);
 
 	input PCsrc;
-	Mux2to1_4bit PC_SRC_MUX (ALU_Result , ALU_out ,PCsrc , PC_In);
+	Mux2to1_32bit PC_SRC_MUX (ALU_Result , ALU_out ,PCsrc , PC_In);
 
 
 	input [1:0] ALUsrcB;
-	Mux4to1_32bit ALU_SRC_B_MUX (B_out , {{31{1'b0}},1'b1}, OP2Reg, sign_extend26_out ,ALUsrcB , In2);
+	Mux4to1_32bit ALU_SRC_B_MUX (B_out , {{31{1'b0}},1'b1}, OP2REG_out, sign_extend26_out ,ALUsrcB , In2);
 
 
 	input [1:0] writeMux;
@@ -130,7 +131,7 @@ module Datapath(
 	output Z_out;
 	assign Z_out = Z;
 
-	output IR_O;
+	output [31:0] IR_O;
 	assign IR_O = IR_out;
 	// //Output Signal from ALU
 	// //V

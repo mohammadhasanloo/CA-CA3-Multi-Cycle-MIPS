@@ -1,0 +1,7 @@
+build/
+*.vvp
+*.vcd
+*.mti
+*.mpf
+*.bak
+.DS_Store

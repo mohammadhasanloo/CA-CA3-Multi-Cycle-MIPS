@@ -18,7 +18,7 @@ module Controller(
 
 	//ALU Control Unit
 	logic [1:0] ALUop;
-	wire [5:0] func;
+	wire [2:0] func;
 	assign func = IR_O[22:20];
 	ALU_control ALU_CU(func ,ALUop , ALUoperation);
 
@@ -41,8 +41,8 @@ module Controller(
 	parameter [3:0] DataTransfer_1 = 4'b1100;
 	parameter [3:0] DataTransfer_2 = 4'b1101;
 
-	wire [1:0] C;
-	assign C = IR_O[31:30];
+	wire [1:0] cond;
+	assign cond = IR_O[31:30];
 	wire [2:0] Type;
 	assign Type = IR_O[29:27];
 	wire L;
@@ -76,7 +76,7 @@ module Controller(
 		case(ps)
 			IF: ns = Getting_Started;
 			Getting_Started: begin
-				if((C == EQ && Z) || (C ==AL) || (C == GT && gt) || (C == LT && lt))
+				if((cond == EQ && Z) || (cond == AL) || (cond == GT && gt) || (cond == LT && lt))
 					ns = ID;
 				else
 					ns = IF;
@@ -155,7 +155,6 @@ module Controller(
 	begin
 		{Mem_read , Mem_write, reg_write,PC_write,Jump,ldPCreg,IRwrite,
 		IoD,PCreg,WAddr,DT_store,ALUsrcA,PCsrc} = 13'b0;
-		ALUoperation = 4'b0;
 		ALUsrcB = 2'b0;
 		writeMux = 2'b0;
 
@@ -175,7 +174,7 @@ module Controller(
 
 			ID: begin
 				ALUsrcA = 1'b0;
-				ALUsrcB = 1'b11;
+				ALUsrcB = 2'b11;
 				ALUop = 2'b00;
 				DT_store = IR_O[28];
 			end
@@ -188,14 +187,14 @@ module Controller(
 
 			Branch_1: begin
 				reg_write = 1'b1;
-				writeMux = 1'b11;
+				writeMux = 2'b11;
 				Jump = 1'b1;
 				WAddr = 1'b1;
 			end
 
 			DataTransfer: begin
 				ALUsrcA = 1'b1;
-				ALUsrcB = 1'b11;
+				ALUsrcB = 2'b11;
 				ALUop = 2'b00;
 			end
 
